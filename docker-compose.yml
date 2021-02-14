@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  mysql:
+    restart: always
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+  redis:
+    image: redis:6.0.9
+    ports:
+        - 6379:6379
+  nginx-nchan:
+    image: weseek/nginx-nchan
+    container_name: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - redis
+  ingame:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    entrypoint: "air"
+    env_file: ./.envrc.docker.local
+    volumes:
+      - .:/himo-ingame
+      - bin:/himo-ingame/bin
+    ports:
+      - "8080:8080"
+volumes:
+  bin:
