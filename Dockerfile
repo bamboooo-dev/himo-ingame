@@ -15,9 +15,7 @@ RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
 
 FROM alpine:3.12.3
 
-ENV TZ Asia/Tokyo
-
-RUN apk --update --no-cache add curl nmap mysql-client tzdata bash ca-certificates jq && \
+RUN apk --update --no-cache add curl nmap mysql-client bash ca-certificates jq && \
   update-ca-certificates
 
 WORKDIR /himo-ingame
