@@ -1,6 +1,6 @@
 FROM golang:1.15.6-alpine AS go_build
 
-RUN apk --update --no-cache add git build-base openssh
+RUN apk --update --no-cache add git build-base tzdata openssh
 
 ENV TZ Asia/Tokyo
 
