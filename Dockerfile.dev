@@ -1,0 +1,15 @@
+FROM golang:1.15.6-alpine
+
+RUN apk --update --no-cache add git build-base openssh curl nmap mysql-client bash jq
+
+RUN curl -sSfL https://raw.githubusercontent.com/cosmtrek/air/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+
+WORKDIR /himo-ingame
+
+COPY go.mod go.sum /himo-ingame/
+RUN go mod download
+
+COPY . /himo-ingame
+
+RUN chmod 755 ./entry-point.sh
+ENTRYPOINT [ "./entry-point.sh" ]
