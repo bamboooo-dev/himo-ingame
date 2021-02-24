@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/bamboooo-dev/himo-ingame/internal/interface/mysql"
 	"github.com/bamboooo-dev/himo-ingame/internal/interface/router"
 	"github.com/bamboooo-dev/himo-ingame/pkg/env"
+	"go.uber.org/zap"
 )
 
 // from LDFLAGS
@@ -26,11 +29,31 @@ func main() {
 		panic(err)
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+
+	sugar := logger.Sugar()
+
+	himoDB, err := mysql.NewDB(cfg.HimoMySQL)
+	if err != nil {
+		sugar.Error(ctx, err)
+		return
+	}
+	defer func() {
+		if err := himoDB.Db.Close(); err != nil {
+			sugar.Error(ctx, err)
+			return
+		}
+	}()
+
 	s := router.NewServer()
 
-	err := http.ListenAndServe(":8080", s)
-	if err != nil {
-		log.Fatal("error starting http server::", err)
+	errs := http.ListenAndServe(":8080", s)
+	if errs != nil {
+		log.Fatal("error starting http server::", errs)
 		return
 	}
 }
