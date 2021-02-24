@@ -17,9 +17,9 @@ type Config struct {
 const configPath = "config.yml"
 
 // LoadConfigFromTemplate はテンプレートから設定を読み込む関数
-func LoadConfigFromTemplate(templatePath string) (config *Config, err error) {
+func LoadConfigFromTemplate() (config *Config, err error) {
 	config = new(Config)
-	err = generateYamlFromTemplate(templatePath, configPath)
+	err = generateYamlFromTemplate(configPath)
 	if err != nil {
 		return
 	}

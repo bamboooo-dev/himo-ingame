@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,9 +12,6 @@ import (
 // from LDFLAGS
 var revision = "undefined"
 
-// from flag
-var templateFilePath string
-
 func main() {
 	defer func() {
 		if err := recover(); err != nil {
@@ -24,10 +20,8 @@ func main() {
 	}()
 
 	fmt.Printf("Version is %s\n", revision)
-	flag.StringVar(&templateFilePath, "f", "config/application.yml.tpl", "path of config template")
-	flag.Parse()
 
-	cfg, err := env.LoadConfigFromTemplate(templateFilePath)
+	cfg, err := env.LoadConfigFromTemplate()
 	if err != nil {
 		panic(err)
 	}

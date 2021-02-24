@@ -5,11 +5,16 @@ import (
 	"os"
 	"text/template"
 
+	_ "embed"
+
 	"golang.org/x/xerrors"
 )
 
+//go:embed application.yml.tpl
+var tpl string
+
 // generateYamlFromTemplate テンプレートのパスを指定して環境変数を元に Yaml を生成、file に書き込む
-func generateYamlFromTemplate(yamlTemplatePath string, filePath string) (err error) {
+func generateYamlFromTemplate(filePath string) (err error) {
 	file, err := os.Create(filePath)
 	if err != nil {
 		return
@@ -26,7 +31,7 @@ func generateYamlFromTemplate(yamlTemplatePath string, filePath string) (err err
 	if err != nil {
 		return
 	}
-	t, err := template.ParseFiles(yamlTemplatePath)
+	t, err := template.New("config").Parse(tpl)
 	if err != nil {
 		return
 	}
