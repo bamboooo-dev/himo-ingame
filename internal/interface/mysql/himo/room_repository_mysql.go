@@ -19,7 +19,7 @@ func NewRoomRepositoryMysql(l *zap.SugaredLogger) repo.RoomRepository {
 }
 
 // Create new Room
-func (r RoomRepositoryMysql) Create(db *gorp.DbMap, max int64, channelName string) (model.Room, error) {
+func (r RoomRepositoryMysql) Create(db *gorp.DbMap, max int, channelName string) (model.Room, error) {
 	roomDAO := &dao.Room{
 		MaxUserNum:  max,
 		ChannelName: channelName,

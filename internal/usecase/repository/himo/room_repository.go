@@ -7,5 +7,5 @@ import (
 
 // RoomRepository はインターフェース
 type RoomRepository interface {
-	Create(db *gorp.DbMap, max int64, channelName string) (model.Room, error)
+	Create(db *gorp.DbMap, max int, channelName string) (model.Room, error)
 }

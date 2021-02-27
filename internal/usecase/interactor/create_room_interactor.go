@@ -23,7 +23,7 @@ func NewCreateRoomInteractor(r registry.Registry) *CreateRoomInteractor {
 }
 
 // Call はお題を作る関数
-func (c *CreateRoomInteractor) Call(db *gorp.DbMap, max int64, channelName string) (model.Room, error) {
+func (c *CreateRoomInteractor) Call(db *gorp.DbMap, max int, channelName string) (model.Room, error) {
 	room, err := c.roomService.Create(db, max, channelName)
 	if err != nil {
 		return model.Room{}, err

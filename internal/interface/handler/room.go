@@ -2,9 +2,11 @@ package handler
 
 import (
 	"math/rand"
+	"strconv"
 
 	"github.com/bamboooo-dev/himo-ingame/internal/registry"
 	"github.com/bamboooo-dev/himo-ingame/internal/usecase/interactor"
+	"github.com/gin-gonic/gin"
 	"github.com/go-gorp/gorp"
 	"go.uber.org/zap"
 )
@@ -26,8 +28,9 @@ func NewRoomHandler(l *zap.SugaredLogger, r registry.Registry, db *gorp.DbMap) *
 }
 
 // Create creates room
-func (r RoomHandler) Create(c Context) {
-	max := c.PostForm("max_num").(int64)
+func (r *RoomHandler) Create(c *gin.Context) {
+	reqMax := c.PostForm("max_num")
+	max, _ := strconv.Atoi(reqMax)
 
 	// channelName に使うランダム文字列を生成
 	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")

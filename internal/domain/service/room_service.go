@@ -20,7 +20,7 @@ func NewRoomService(r registry.Registry) *RoomService {
 }
 
 // Create は部屋を作成する
-func (r *RoomService) Create(db *gorp.DbMap, max int64, channelName string) (model.Room, error) {
+func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string) (model.Room, error) {
 	Room, err := r.RoomRepo.Create(db, max, channelName)
 	if err != nil {
 		return model.Room{}, err
