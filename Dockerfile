@@ -19,7 +19,6 @@ RUN apk --update --no-cache add curl nmap mysql-client bash ca-certificates jq &
   update-ca-certificates
 
 WORKDIR /himo-ingame
-COPY ./index.html ./index.html
 COPY ./entry-point.sh ./entry-point.sh
 COPY --from=go_build /himo-ingame/bin/ingame ./bin/
 
