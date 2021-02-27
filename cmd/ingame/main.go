@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
 
+	"github.com/bamboooo-dev/himo-ingame/internal/interface/handler"
 	"github.com/bamboooo-dev/himo-ingame/internal/interface/mysql"
-	"github.com/bamboooo-dev/himo-ingame/internal/interface/router"
+	"github.com/bamboooo-dev/himo-ingame/internal/registry"
 	"github.com/bamboooo-dev/himo-ingame/pkg/env"
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
 
@@ -49,11 +49,10 @@ func main() {
 		}
 	}()
 
-	s := router.NewServer()
+	registry := registry.NewRegistry(cfg, sugar)
 
-	errs := http.ListenAndServe(":8080", s)
-	if errs != nil {
-		log.Fatal("error starting http server::", errs)
-		return
-	}
+	router := gin.Default()
+	roomHandler := handler.NewRoomHandler(sugar, registry, himoDB)
+	router.POST("/room", func(c *gin.Context) { roomHandler.Create(c) })
+	router.Run(":8080")
 }
