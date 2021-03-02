@@ -8,9 +8,8 @@ import (
 	"golang.org/x/xerrors"
 )
 
-// Config for environmental dependencies of scotch
 type Config struct {
-	HimoMySQL mysql.Config `yaml:"scotchMySQL"`
+	HimoMySQL mysql.Config `yaml:"himoMySQL"`
 }
 
 // configPath is tmp file of config
