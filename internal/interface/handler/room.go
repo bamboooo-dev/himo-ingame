@@ -2,7 +2,6 @@ package handler
 
 import (
 	"math/rand"
-	"strconv"
 
 	"github.com/bamboooo-dev/himo-ingame/internal/registry"
 	"github.com/bamboooo-dev/himo-ingame/internal/usecase/interactor"
@@ -18,6 +17,10 @@ type RoomHandler struct {
 	db      *gorp.DbMap
 }
 
+type CreateRoomRequest struct {
+	FieldMaxNum int `json:"max_num"`
+}
+
 // NewRoomHandler は IndexHandler のポインタを生成する関数です。
 func NewRoomHandler(l *zap.SugaredLogger, r registry.Registry, db *gorp.DbMap) *RoomHandler {
 	return &RoomHandler{
@@ -29,8 +32,13 @@ func NewRoomHandler(l *zap.SugaredLogger, r registry.Registry, db *gorp.DbMap) *
 
 // Create creates room
 func (r *RoomHandler) Create(c *gin.Context) {
-	reqMax := c.PostForm("max_num")
-	max, _ := strconv.Atoi(reqMax)
+	// request の中身を取得
+	var json CreateRoomRequest
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	max := json.FieldMaxNum
 
 	// channelName に使うランダム文字列を生成
 	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -45,5 +53,9 @@ func (r *RoomHandler) Create(c *gin.Context) {
 		c.JSON(500, "Internal Server Error")
 		return
 	}
-	c.JSON(200, room.ChannelName)
+	c.JSON(200, gin.H{
+		"message":      "Room successfully created",
+		"channel_name": room.ChannelName,
+		"max_num":      max,
+	})
 }
