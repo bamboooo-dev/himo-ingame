@@ -18,7 +18,8 @@ type RoomHandler struct {
 }
 
 type CreateRoomRequest struct {
-	FieldMaxNum int `json:"max_num"`
+	FieldMaxNum   int   `json:"max_num"`
+	FieldThemeIds []int `json:"theme_ids"`
 }
 
 // NewRoomHandler は IndexHandler のポインタを生成する関数です。
@@ -39,6 +40,7 @@ func (r *RoomHandler) Create(c *gin.Context) {
 		return
 	}
 	max := json.FieldMaxNum
+	themeIDs := json.FieldThemeIds
 
 	// channelName に使うランダム文字列を生成
 	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
@@ -48,7 +50,7 @@ func (r *RoomHandler) Create(c *gin.Context) {
 	}
 	randomString := string(b)
 
-	room, err := r.creator.Call(r.db, max, randomString)
+	room, err := r.creator.Call(r.db, max, randomString, themeIDs)
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
 		return
@@ -56,6 +58,7 @@ func (r *RoomHandler) Create(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message":      "Room successfully created",
 		"channel_name": room.ChannelName,
-		"max_num":      max,
+		"max_num":      room.MaxUserNum,
+		"theme_ids":    themeIDs,
 	})
 }
