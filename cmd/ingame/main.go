@@ -54,5 +54,6 @@ func main() {
 	router := gin.Default()
 	roomHandler := handler.NewRoomHandler(sugar, registry, himoDB)
 	router.POST("/room", func(c *gin.Context) { roomHandler.Create(c) })
+	router.POST("/enter", func(c *gin.Context) { roomHandler.Enter(c) })
 	router.Run(":8080")
 }

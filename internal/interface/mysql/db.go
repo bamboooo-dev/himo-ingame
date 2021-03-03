@@ -37,6 +37,7 @@ func NewDB(cfg Config) (*gorp.DbMap, error) {
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8"}}
 
 	dbmap.AddTableWithName(dao.Room{}, "rooms").SetKeys(true, "ID")
+	dbmap.AddTableWithName(dao.Theme{}, "themes").SetKeys(true, "ID")
 	dbmap.AddTableWithName(dao.RoomTheme{}, "room_themes")
 
 	if err := dbmap.CreateTablesIfNotExists(); err != nil {

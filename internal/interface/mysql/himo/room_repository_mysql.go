@@ -37,3 +37,23 @@ func (r RoomRepositoryMysql) Create(db *gorp.DbMap, max int, channelName string)
 	}
 	return room, nil
 }
+
+// FetchThemesByChannelName fetch themes by channelName
+func (r RoomRepositoryMysql) FetchThemesByChannelName(db *gorp.DbMap, channelName string) ([]model.Theme, error) {
+	var daoThemes []dao.Theme
+
+	_, err := db.Select(&daoThemes, "SELECT t.id, t.sentence FROM room_themes AS rt INNER JOIN rooms AS r ON rt.room_id = r.id INNER JOIN themes AS t ON rt.theme_id = t.id WHERE r.channel_name = ?", channelName)
+	if err != nil {
+		return []model.Theme{}, err
+	}
+
+	themes := []model.Theme{}
+	for _, daoTheme := range daoThemes {
+		theme := model.Theme{
+			ID:       daoTheme.ID,
+			Sentence: daoTheme.Sentence,
+		}
+		themes = append(themes, theme)
+	}
+	return themes, nil
+}
