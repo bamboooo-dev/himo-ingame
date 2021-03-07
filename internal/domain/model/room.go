@@ -5,4 +5,5 @@ type Room struct {
 	ID          int
 	MaxUserNum  int
 	ChannelName string
+	Themes      []Theme
 }

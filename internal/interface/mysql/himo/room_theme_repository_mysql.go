@@ -19,14 +19,16 @@ func NewRoomThemeRepositoryMysql(l *zap.SugaredLogger) repo.RoomThemeRepository 
 }
 
 // Create new RoomTheme
-func (r RoomThemeRepositoryMysql) Create(db *gorp.DbMap, roomID int, themeIDs []int) ([]model.RoomTheme, error) {
+func (r RoomThemeRepositoryMysql) Create(db *gorp.DbMap, room model.Room) ([]model.RoomTheme, error) {
 
 	var roomThemes []model.RoomTheme
 
-	for _, themeID := range themeIDs {
+	themes := room.Themes
+
+	for _, theme := range themes {
 		roomThemeDAO := &dao.RoomTheme{
-			RoomID:  roomID,
-			ThemeID: themeID,
+			RoomID:  room.ID,
+			ThemeID: theme.ID,
 		}
 
 		// TODO: N+1 なってるからバルクインサートするようにしたい
@@ -36,8 +38,8 @@ func (r RoomThemeRepositoryMysql) Create(db *gorp.DbMap, roomID int, themeIDs []
 		}
 
 		roomTheme := model.RoomTheme{
-			RoomID:  roomID,
-			ThemeID: themeID,
+			RoomID:  room.ID,
+			ThemeID: theme.ID,
 		}
 		roomThemes = append(roomThemes, roomTheme)
 	}
