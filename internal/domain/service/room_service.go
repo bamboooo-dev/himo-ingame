@@ -9,21 +9,28 @@ import (
 
 // RoomService は部屋に関するドメインサービスの構造体
 type RoomService struct {
-	RoomRepo repo.RoomRepository
+	roomRepo      repo.RoomRepository
+	roomThemeRepo repo.RoomThemeRepository
 }
 
 // NewRoomService は RoomService のコンストラクタ
 func NewRoomService(r registry.Registry) *RoomService {
 	return &RoomService{
-		RoomRepo: r.NewRoomRepository(),
+		roomRepo:      r.NewRoomRepository(),
+		roomThemeRepo: r.NewRoomThemeRepository(),
 	}
 }
 
 // Create は部屋を作成する
-func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string) (model.Room, error) {
-	Room, err := r.RoomRepo.Create(db, max, channelName)
+func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string, themeIDs []int) (model.Room, error) {
+	room, err := r.roomRepo.Create(db, max, channelName, themeIDs)
 	if err != nil {
 		return model.Room{}, err
 	}
-	return Room, nil
+
+	_, err = r.roomThemeRepo.Create(db, room)
+	if err != nil {
+		return model.Room{}, err
+	}
+	return room, nil
 }
