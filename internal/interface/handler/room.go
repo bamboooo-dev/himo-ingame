@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"math/rand"
-
 	"github.com/bamboooo-dev/himo-ingame/internal/registry"
 	"github.com/bamboooo-dev/himo-ingame/internal/usecase/interactor"
 	"github.com/gin-gonic/gin"
@@ -48,15 +46,7 @@ func (r *RoomHandler) Create(c *gin.Context) {
 	max := json.FieldMaxNum
 	themeIDs := json.FieldThemeIds
 
-	// channelName に使うランダム文字列を生成
-	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	b := make([]rune, 15)
-	for i := range b {
-		b[i] = letter[rand.Intn(len(letter))]
-	}
-	randomString := string(b)
-
-	room, err := r.creator.Call(r.db, max, randomString, themeIDs)
+	room, err := r.creator.Call(r.db, max, themeIDs)
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
 		return

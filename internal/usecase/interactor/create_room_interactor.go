@@ -1,6 +1,8 @@
 package interactor
 
 import (
+	"math/rand"
+
 	"github.com/bamboooo-dev/himo-ingame/internal/domain/model"
 	"github.com/bamboooo-dev/himo-ingame/internal/domain/service"
 	"github.com/bamboooo-dev/himo-ingame/internal/registry"
@@ -25,13 +27,16 @@ func NewCreateRoomInteractor(r registry.Registry) *CreateRoomInteractor {
 }
 
 // Call は部屋を作る関数
-func (c *CreateRoomInteractor) Call(db *gorp.DbMap, max int, channelName string, themeIDs []int) (model.Room, error) {
-	room, err := c.roomService.Create(db, max, channelName)
-	if err != nil {
-		return model.Room{}, err
+func (c *CreateRoomInteractor) Call(db *gorp.DbMap, max int, themeIDs []int) (model.Room, error) {
+	// channelName に使うランダム文字列を生成
+	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	b := make([]rune, 15)
+	for i := range b {
+		b[i] = letter[rand.Intn(len(letter))]
 	}
+	randomString := string(b)
 
-	_, err = c.roomThemeRepo.Create(db, room.ID, themeIDs)
+	room, err := c.roomService.Create(db, max, randomString, themeIDs)
 	if err != nil {
 		return model.Room{}, err
 	}
