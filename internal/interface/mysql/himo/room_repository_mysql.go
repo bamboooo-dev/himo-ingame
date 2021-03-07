@@ -1,6 +1,9 @@
 package himo
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/bamboooo-dev/himo-ingame/internal/domain/model"
 	dao "github.com/bamboooo-dev/himo-ingame/internal/interface/dao/himo"
 	repo "github.com/bamboooo-dev/himo-ingame/internal/usecase/repository/himo"
@@ -23,11 +26,13 @@ func (r RoomRepositoryMysql) Create(db *gorp.DbMap, max int, channelName string,
 
 	var daoThemes []dao.Theme
 	args := make([]interface{}, len(themeIDs))
+	quarks := make([]string, len(themeIDs))
 	for i, themeID := range themeIDs {
 		args[i] = themeID
+		quarks[i] = "?"
 	}
 
-	_, err := db.Select(&daoThemes, "SELECT * FROM themes WHERE id IN (?, ?, ?)", args...)
+	_, err := db.Select(&daoThemes, fmt.Sprintf("SELECT * FROM themes WHERE id IN (%s)", strings.Join(quarks, ", ")), args...)
 	if err != nil {
 		return model.Room{}, err
 	}
