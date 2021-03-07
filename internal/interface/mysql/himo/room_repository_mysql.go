@@ -19,13 +19,34 @@ func NewRoomRepositoryMysql(l *zap.SugaredLogger) repo.RoomRepository {
 }
 
 // Create new Room
-func (r RoomRepositoryMysql) Create(db *gorp.DbMap, max int, channelName string) (model.Room, error) {
+func (r RoomRepositoryMysql) Create(db *gorp.DbMap, max int, channelName string, themeIDs []int) (model.Room, error) {
+
+	var daoThemes []dao.Theme
+	args := make([]interface{}, len(themeIDs))
+	for i, themeID := range themeIDs {
+		args[i] = themeID
+	}
+
+	_, err := db.Select(&daoThemes, "SELECT * FROM themes WHERE id IN (?, ?, ?)", args...)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	themes := []model.Theme{}
+	for _, daoTheme := range daoThemes {
+		theme := model.Theme{
+			ID:       daoTheme.ID,
+			Sentence: daoTheme.Sentence,
+		}
+		themes = append(themes, theme)
+	}
+
 	roomDAO := &dao.Room{
 		MaxUserNum:  max,
 		ChannelName: channelName,
 	}
 
-	err := db.Insert(roomDAO)
+	err = db.Insert(roomDAO)
 	if err != nil {
 		return model.Room{}, err
 	}
@@ -34,6 +55,7 @@ func (r RoomRepositoryMysql) Create(db *gorp.DbMap, max int, channelName string)
 		ID:          roomDAO.ID,
 		MaxUserNum:  roomDAO.MaxUserNum,
 		ChannelName: roomDAO.ChannelName,
+		Themes:      themes,
 	}
 	return room, nil
 }
