@@ -20,9 +20,6 @@ func NewRoomThemeRepositoryMysql(l *zap.SugaredLogger) repo.RoomThemeRepository 
 
 // Create new RoomTheme
 func (r RoomThemeRepositoryMysql) BulkCreate(db *gorp.DbMap, room model.Room, themes []model.Theme) error {
-
-	var roomThemes []model.RoomTheme
-
 	for _, theme := range themes {
 		roomThemeDAO := &dao.RoomTheme{
 			RoomID:  room.ID,
@@ -34,12 +31,6 @@ func (r RoomThemeRepositoryMysql) BulkCreate(db *gorp.DbMap, room model.Room, th
 		if err != nil {
 			return err
 		}
-
-		roomTheme := model.RoomTheme{
-			RoomID:  room.ID,
-			ThemeID: theme.ID,
-		}
-		roomThemes = append(roomThemes, roomTheme)
 	}
 
 	return nil
