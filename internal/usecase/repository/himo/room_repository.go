@@ -7,6 +7,6 @@ import (
 
 // RoomRepository はインターフェース
 type RoomRepository interface {
-	Create(db *gorp.DbMap, max int, channelName string, themeIDs []int) (model.Room, error)
+	Create(db *gorp.DbMap, room model.Room) error
 	FetchThemesByChannelName(db *gorp.DbMap, channelName string) ([]model.Theme, error)
 }

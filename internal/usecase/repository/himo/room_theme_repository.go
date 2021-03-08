@@ -7,5 +7,5 @@ import (
 
 // RoomThemeRepository はインターフェース
 type RoomThemeRepository interface {
-	Create(db *gorp.DbMap, room model.Room) ([]model.RoomTheme, error)
+	BulkCreate(db *gorp.DbMap, room model.Room, themes []model.Theme) error
 }

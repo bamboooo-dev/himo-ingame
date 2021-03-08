@@ -19,11 +19,9 @@ func NewRoomThemeRepositoryMysql(l *zap.SugaredLogger) repo.RoomThemeRepository 
 }
 
 // Create new RoomTheme
-func (r RoomThemeRepositoryMysql) Create(db *gorp.DbMap, room model.Room) ([]model.RoomTheme, error) {
+func (r RoomThemeRepositoryMysql) BulkCreate(db *gorp.DbMap, room model.Room, themes []model.Theme) error {
 
 	var roomThemes []model.RoomTheme
-
-	themes := room.Themes
 
 	for _, theme := range themes {
 		roomThemeDAO := &dao.RoomTheme{
@@ -34,7 +32,7 @@ func (r RoomThemeRepositoryMysql) Create(db *gorp.DbMap, room model.Room) ([]mod
 		// TODO: N+1 なってるからバルクインサートするようにしたい
 		err := db.Insert(roomThemeDAO)
 		if err != nil {
-			return []model.RoomTheme{}, err
+			return err
 		}
 
 		roomTheme := model.RoomTheme{
@@ -44,5 +42,5 @@ func (r RoomThemeRepositoryMysql) Create(db *gorp.DbMap, room model.Room) ([]mod
 		roomThemes = append(roomThemes, roomTheme)
 	}
 
-	return roomThemes, nil
+	return nil
 }

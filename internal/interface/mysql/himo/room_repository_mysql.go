@@ -1,9 +1,6 @@
 package himo
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/bamboooo-dev/himo-ingame/internal/domain/model"
 	dao "github.com/bamboooo-dev/himo-ingame/internal/interface/dao/himo"
 	repo "github.com/bamboooo-dev/himo-ingame/internal/usecase/repository/himo"
@@ -22,47 +19,18 @@ func NewRoomRepositoryMysql(l *zap.SugaredLogger) repo.RoomRepository {
 }
 
 // Create new Room
-func (r RoomRepositoryMysql) Create(db *gorp.DbMap, max int, channelName string, themeIDs []int) (model.Room, error) {
-
-	var daoThemes []dao.Theme
-	args := make([]interface{}, len(themeIDs))
-	quarks := make([]string, len(themeIDs))
-	for i, themeID := range themeIDs {
-		args[i] = themeID
-		quarks[i] = "?"
-	}
-
-	_, err := db.Select(&daoThemes, fmt.Sprintf("SELECT * FROM themes WHERE id IN (%s)", strings.Join(quarks, ", ")), args...)
-	if err != nil {
-		return model.Room{}, err
-	}
-
-	themes := []model.Theme{}
-	for _, daoTheme := range daoThemes {
-		theme := model.Theme{
-			ID:       daoTheme.ID,
-			Sentence: daoTheme.Sentence,
-		}
-		themes = append(themes, theme)
-	}
+func (r RoomRepositoryMysql) Create(db *gorp.DbMap, room model.Room) error {
 
 	roomDAO := &dao.Room{
-		MaxUserNum:  max,
-		ChannelName: channelName,
+		MaxUserNum:  room.MaxUserNum,
+		ChannelName: room.ChannelName,
 	}
 
-	err = db.Insert(roomDAO)
+	err := db.Insert(roomDAO)
 	if err != nil {
-		return model.Room{}, err
+		return err
 	}
-
-	room := model.Room{
-		ID:          roomDAO.ID,
-		MaxUserNum:  roomDAO.MaxUserNum,
-		ChannelName: roomDAO.ChannelName,
-		Themes:      themes,
-	}
-	return room, nil
+	return nil
 }
 
 // FetchThemesByChannelName fetch themes by channelName
