@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/bamboooo-dev/himo-ingame/internal/registry"
 	"github.com/bamboooo-dev/himo-ingame/internal/usecase/interactor"
+	"github.com/bamboooo-dev/himo-ingame/websocket"
 	"github.com/gin-gonic/gin"
 	"github.com/go-gorp/gorp"
 	"go.uber.org/zap"
@@ -51,6 +52,10 @@ func (r *RoomHandler) Create(c *gin.Context) {
 		c.JSON(500, "Internal Server Error")
 		return
 	}
+
+	// topic を subscribe
+	go websocket.ClientStart(room.MaxUserNum, room.ChannelName)
+
 	c.JSON(200, gin.H{
 		"message":      "Room successfully created",
 		"channel_name": room.ChannelName,
