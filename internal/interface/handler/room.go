@@ -55,7 +55,7 @@ func (r *RoomHandler) Create(c *gin.Context) {
 		"message":      "Room successfully created",
 		"channel_name": room.ChannelName,
 		"max_num":      room.MaxUserNum,
-		"theme_ids":    themeIDs,
+		"themes":       room.Themes,
 	})
 }
 
