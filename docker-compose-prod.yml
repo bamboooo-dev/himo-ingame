@@ -1,18 +1,13 @@
 version: "3.8"
 
 services:
-  db:
-    restart: always
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    ports:
-      - 3306:3306
   redis:
     restart: always
     image: redis:6.0.9
     ports:
         - 6379:6379
+    networks:
+      - himo_links
   nginx-nchan:
     restart: always
     image: weseek/nginx-nchan
@@ -23,11 +18,20 @@ services:
       - ./nginx:/etc/nginx/conf.d
     depends_on:
       - redis
+    networks:
+      - himo_links
   ingame:
     restart: always
     image: bamboooo/himo-ingame
+    env_file: ./.envrc.docker.local
     command: "./bin/ingame"
     ports:
       - 8080:8080
-    depends_on:
-      - mysql
+    networks:
+      - himo_links
+
+# devサーバーで ingame が先に立っていた outgame の db service をみるためにネットワークを指定
+# 上記の理由から db はこの yaml から消している
+networks:
+  himo_links:
+    external: true
