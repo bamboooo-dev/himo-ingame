@@ -86,3 +86,12 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 		"max_num": room.MaxUserNum,
 	})
 }
+
+func (r *RoomHandler) Hello(c *gin.Context) {
+	authUser, _ := c.Get("AuthorizedUser")
+
+	c.JSON(200, gin.H{
+		"message": "Successfully JWT",
+		"user":    authUser,
+	})
+}

@@ -38,6 +38,7 @@ func NewDB(cfg Config) (*gorp.DbMap, error) {
 
 	dbmap.AddTableWithName(dao.Room{}, "rooms").SetKeys(true, "ID")
 	dbmap.AddTableWithName(dao.Theme{}, "themes").SetKeys(true, "ID")
+	dbmap.AddTableWithName(dao.User{}, "users").SetKeys(true, "ID")
 	dbmap.AddTableWithName(dao.RoomTheme{}, "room_themes")
 
 	if err := dbmap.CreateTablesIfNotExists(); err != nil {

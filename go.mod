@@ -3,6 +3,7 @@ module github.com/bamboooo-dev/himo-ingame
 go 1.16
 
 require (
+	github.com/appleboy/gin-jwt/v2 v2.6.4
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-gorp/gorp v2.2.0+incompatible
 	github.com/go-sql-driver/mysql v1.5.0
