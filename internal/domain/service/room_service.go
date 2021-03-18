@@ -36,7 +36,7 @@ func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string, themeI
 		Themes:      themes,
 	}
 
-	err = r.roomRepo.Create(db, room)
+	room, err = r.roomRepo.Create(db, room)
 	if err != nil {
 		return model.Room{}, err
 	}
@@ -59,12 +59,6 @@ func (r *RoomService) Enter(db *gorp.DbMap, channelName string) (model.Room, err
 	if err != nil {
 		return model.Room{}, err
 	}
-
-	room = model.Room{
-		MaxUserNum:  room.MaxUserNum,
-		ChannelName: room.ChannelName,
-	}
-
 	room.Themes = themes
 
 	return room, nil

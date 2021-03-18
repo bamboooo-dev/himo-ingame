@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"database/sql"
+
 	"github.com/bamboooo-dev/himo-ingame/internal/registry"
 	"github.com/bamboooo-dev/himo-ingame/internal/usecase/interactor"
 	"github.com/gin-gonic/gin"
@@ -70,7 +72,7 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 	channelName := json.FieldChannelName
 
 	room, err := r.enteror.Call(r.db, channelName)
-	if room.ID == 0 {
+	if err == sql.ErrNoRows {
 		c.JSON(404, "Room Not Found")
 		return
 	}
