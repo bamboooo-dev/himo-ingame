@@ -19,7 +19,7 @@ func NewRoomRepositoryMysql(l *zap.SugaredLogger) repo.RoomRepository {
 }
 
 // Create new Room
-func (r RoomRepositoryMysql) Create(db *gorp.DbMap, room model.Room) error {
+func (r RoomRepositoryMysql) Create(db *gorp.DbMap, room model.Room) (model.Room, error) {
 
 	roomDAO := &dao.Room{
 		MaxUserNum:  room.MaxUserNum,
@@ -28,9 +28,10 @@ func (r RoomRepositoryMysql) Create(db *gorp.DbMap, room model.Room) error {
 
 	err := db.Insert(roomDAO)
 	if err != nil {
-		return err
+		return model.Room{}, err
 	}
-	return nil
+	room.ID = roomDAO.ID
+	return room, nil
 }
 
 // FetchThemesByChannelName fetch themes by channelName
@@ -51,4 +52,22 @@ func (r RoomRepositoryMysql) FetchThemesByChannelName(db *gorp.DbMap, channelNam
 		themes = append(themes, theme)
 	}
 	return themes, nil
+}
+
+// FetchThemesByChannelName fetch room by channelName
+func (r RoomRepositoryMysql) FetchByChannelName(db *gorp.DbMap, channelName string) (model.Room, error) {
+	var daoRoom dao.Room
+
+	err := db.SelectOne(&daoRoom, "SELECT * FROM rooms WHERE channel_name = ?", channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	room := model.Room{
+		ID:          daoRoom.ID,
+		MaxUserNum:  daoRoom.MaxUserNum,
+		ChannelName: daoRoom.ChannelName,
+	}
+
+	return room, nil
 }

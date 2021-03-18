@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"database/sql"
+
 	"github.com/bamboooo-dev/himo-ingame/internal/registry"
 	"github.com/bamboooo-dev/himo-ingame/internal/usecase/interactor"
 	"github.com/gin-gonic/gin"
@@ -55,7 +57,7 @@ func (r *RoomHandler) Create(c *gin.Context) {
 		"message":      "Room successfully created",
 		"channel_name": room.ChannelName,
 		"max_num":      room.MaxUserNum,
-		"theme_ids":    themeIDs,
+		"themes":       room.Themes,
 	})
 }
 
@@ -69,13 +71,18 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 	}
 	channelName := json.FieldChannelName
 
-	themes, err := r.enteror.Call(r.db, channelName)
+	room, err := r.enteror.Call(r.db, channelName)
+	if err == sql.ErrNoRows {
+		c.JSON(404, "Room Not Found")
+		return
+	}
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
 		return
 	}
 	c.JSON(200, gin.H{
 		"message": "Successfully entered room",
-		"themes":  themes,
+		"themes":  room.Themes,
+		"max_num": room.MaxUserNum,
 	})
 }
