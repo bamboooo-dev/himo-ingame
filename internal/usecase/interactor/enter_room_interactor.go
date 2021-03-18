@@ -23,11 +23,11 @@ func NewEnterRoomInteractor(r registry.Registry) *EnterRoomInteractor {
 }
 
 // Call は部屋に入る関数
-func (e *EnterRoomInteractor) Call(db *gorp.DbMap, channelName string) ([]model.Theme, error) {
-	themes, err := e.roomRepo.FetchThemesByChannelName(db, channelName)
+func (e *EnterRoomInteractor) Call(db *gorp.DbMap, channelName string) (model.Room, error) {
+	room, err := e.roomService.Enter(db, channelName)
 	if err != nil {
-		return []model.Theme{}, err
+		return model.Room{}, err
 	}
 
-	return themes, nil
+	return room, nil
 }

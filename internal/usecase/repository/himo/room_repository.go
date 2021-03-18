@@ -9,4 +9,5 @@ import (
 type RoomRepository interface {
 	Create(db *gorp.DbMap, room model.Room) error
 	FetchThemesByChannelName(db *gorp.DbMap, channelName string) ([]model.Theme, error)
+	FetchByChannelName(db *gorp.DbMap, channelName string) (model.Room, error)
 }

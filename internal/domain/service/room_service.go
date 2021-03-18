@@ -47,3 +47,21 @@ func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string, themeI
 	}
 	return room, nil
 }
+
+// Enter は部屋に入る
+func (r *RoomService) Enter(db *gorp.DbMap, channelName string) (model.Room, error) {
+	themes, err := r.roomRepo.FetchThemesByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	room, err := r.roomRepo.FetchByChannelName(db, channelName)
+
+	room = model.Room{
+		MaxUserNum:  room.MaxUserNum,
+		ChannelName: room.ChannelName,
+		Themes:      themes,
+	}
+
+	return room, nil
+}

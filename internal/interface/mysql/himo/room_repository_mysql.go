@@ -52,3 +52,21 @@ func (r RoomRepositoryMysql) FetchThemesByChannelName(db *gorp.DbMap, channelNam
 	}
 	return themes, nil
 }
+
+// FetchThemesByChannelName fetch room by channelName
+func (r RoomRepositoryMysql) FetchByChannelName(db *gorp.DbMap, channelName string) (model.Room, error) {
+	var daoRoom dao.Room
+
+	_, err := db.Select(&daoRoom, "SELECT * FROM rooms WHERE channelName = ?", channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	room := model.Room{
+		ID:          daoRoom.ID,
+		MaxUserNum:  daoRoom.MaxUserNum,
+		ChannelName: daoRoom.ChannelName,
+	}
+
+	return room, nil
+}

@@ -69,13 +69,14 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 	}
 	channelName := json.FieldChannelName
 
-	themes, err := r.enteror.Call(r.db, channelName)
+	room, err := r.enteror.Call(r.db, channelName)
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
 		return
 	}
 	c.JSON(200, gin.H{
 		"message": "Successfully entered room",
-		"themes":  themes,
+		"themes":  room.Themes,
+		"max_num": room.MaxUserNum,
 	})
 }
