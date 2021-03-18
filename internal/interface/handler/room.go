@@ -70,6 +70,10 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 	channelName := json.FieldChannelName
 
 	room, err := r.enteror.Call(r.db, channelName)
+	if room.ID == 0 {
+		c.JSON(404, "Room Not Found")
+		return
+	}
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
 		return

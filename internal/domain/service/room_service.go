@@ -56,12 +56,16 @@ func (r *RoomService) Enter(db *gorp.DbMap, channelName string) (model.Room, err
 	}
 
 	room, err := r.roomRepo.FetchByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
 
 	room = model.Room{
 		MaxUserNum:  room.MaxUserNum,
 		ChannelName: room.ChannelName,
-		Themes:      themes,
 	}
+
+	room.Themes = themes
 
 	return room, nil
 }
