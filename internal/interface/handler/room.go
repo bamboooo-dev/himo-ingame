@@ -51,6 +51,10 @@ func (r *RoomHandler) Create(c *gin.Context) {
 	userID, _ := c.Get("AuthorizedUser")
 
 	room, err := r.creator.Call(r.db, max, themeIDs, userID.(int))
+	if err == sql.ErrNoRows {
+		c.JSON(404, "Not Found")
+		return
+	}
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
 		return

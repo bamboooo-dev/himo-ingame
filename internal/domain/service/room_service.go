@@ -13,6 +13,7 @@ type RoomService struct {
 	roomThemeRepo repo.RoomThemeRepository
 	themeRepo     repo.ThemeRepository
 	userRepo      repo.UserRepository
+	userRoomRepo  repo.UserRoomRepository
 }
 
 // NewRoomService は RoomService のコンストラクタ
@@ -22,6 +23,7 @@ func NewRoomService(r registry.Registry) *RoomService {
 		roomThemeRepo: r.NewRoomThemeRepository(),
 		themeRepo:     r.NewThemeRepository(),
 		userRepo:      r.NewUserRepository(),
+		userRoomRepo:  r.NewUserRoomRepository(),
 	}
 }
 
@@ -52,6 +54,12 @@ func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string, themeI
 	if err != nil {
 		return model.Room{}, err
 	}
+
+	err = r.userRoomRepo.BulkCreate(db, user, room)
+	if err != nil {
+		return model.Room{}, err
+	}
+
 	return room, nil
 }
 

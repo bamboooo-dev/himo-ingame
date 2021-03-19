@@ -18,7 +18,7 @@ func NewUserRepositoryMysql(l *zap.SugaredLogger) repo.UserRepository {
 	return UserRepositoryMysql{logger: l}
 }
 
-// Create new User
+// fetch User by id
 func (u UserRepositoryMysql) FetchByID(db *gorp.DbMap, userID int) (model.User, error) {
 
 	var daoUser dao.User
