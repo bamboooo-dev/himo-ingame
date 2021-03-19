@@ -48,6 +48,8 @@ func (r *RoomHandler) Create(c *gin.Context) {
 	max := json.FieldMaxNum
 	themeIDs := json.FieldThemeIds
 
+	// authUser, _ := c.Get("AuthorizedUser")
+
 	room, err := r.creator.Call(r.db, max, themeIDs)
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
@@ -88,10 +90,10 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 }
 
 func (r *RoomHandler) Hello(c *gin.Context) {
-	authUser, _ := c.Get("AuthorizedUser")
+	authUserID, _ := c.Get("AuthorizedUser")
 
 	c.JSON(200, gin.H{
 		"message": "Successfully JWT",
-		"user":    authUser,
+		"user":    authUserID,
 	})
 }

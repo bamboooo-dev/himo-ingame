@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -78,7 +79,8 @@ func main() {
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
 			if v, ok := data.(*User); ok {
-				c.Set("AuthorizedUser", v) // gin の Context に得られた user を入れておく
+				userID, _ := strconv.Atoi(v.ID)
+				c.Set("AuthorizedUser", userID) // gin の Context に得られた userID を入れておく
 				return true
 			}
 
