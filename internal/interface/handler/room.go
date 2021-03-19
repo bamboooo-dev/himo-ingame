@@ -48,9 +48,9 @@ func (r *RoomHandler) Create(c *gin.Context) {
 	max := json.FieldMaxNum
 	themeIDs := json.FieldThemeIds
 
-	// authUser, _ := c.Get("AuthorizedUser")
+	userID, _ := c.Get("AuthorizedUser")
 
-	room, err := r.creator.Call(r.db, max, themeIDs)
+	room, err := r.creator.Call(r.db, max, themeIDs, userID.(int))
 	if err != nil {
 		c.JSON(500, "Internal Server Error")
 		return
