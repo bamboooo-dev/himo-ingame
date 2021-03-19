@@ -64,7 +64,12 @@ func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string, themeI
 }
 
 // Enter は部屋に入る
-func (r *RoomService) Enter(db *gorp.DbMap, channelName string) (model.Room, error) {
+func (r *RoomService) Enter(db *gorp.DbMap, channelName string, userID int) (model.Room, error) {
+	user, err := r.userRepo.FetchByID(db, userID)
+	if err != nil {
+		return model.Room{}, err
+	}
+
 	themes, err := r.roomRepo.FetchThemesByChannelName(db, channelName)
 	if err != nil {
 		return model.Room{}, err
@@ -75,6 +80,11 @@ func (r *RoomService) Enter(db *gorp.DbMap, channelName string) (model.Room, err
 		return model.Room{}, err
 	}
 	room.Themes = themes
+
+	err = r.userRoomRepo.BulkCreate(db, user, room)
+	if err != nil {
+		return model.Room{}, err
+	}
 
 	return room, nil
 }

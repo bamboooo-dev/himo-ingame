@@ -77,9 +77,11 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 	}
 	channelName := json.FieldChannelName
 
-	room, err := r.enteror.Call(r.db, channelName)
+	userID, _ := c.Get("AuthorizedUser")
+
+	room, err := r.enteror.Call(r.db, channelName, userID.(int))
 	if err == sql.ErrNoRows {
-		c.JSON(404, "Room Not Found")
+		c.JSON(404, "Not Found")
 		return
 	}
 	if err != nil {
