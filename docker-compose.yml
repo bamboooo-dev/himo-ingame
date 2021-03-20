@@ -14,9 +14,9 @@ services:
     image: redis:6.0.9
     ports:
         - 6379:6379
-  nginx-nchan:
+  nchan:
     image: weseek/nginx-nchan
-    container_name: nginx
+    container_name: nchan
     ports:
       - 80:80
     volumes:

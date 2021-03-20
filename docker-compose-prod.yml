@@ -8,10 +8,10 @@ services:
         - 6379:6379
     networks:
       - himo_links
-  nginx-nchan:
+  nchan:
     restart: always
     image: weseek/nginx-nchan
-    container_name: nginx
+    container_name: nchan
     ports:
       - 80:80
     volumes:
