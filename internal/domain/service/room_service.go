@@ -12,6 +12,8 @@ type RoomService struct {
 	roomRepo      repo.RoomRepository
 	roomThemeRepo repo.RoomThemeRepository
 	themeRepo     repo.ThemeRepository
+	userRepo      repo.UserRepository
+	userRoomRepo  repo.UserRoomRepository
 }
 
 // NewRoomService は RoomService のコンストラクタ
@@ -20,11 +22,18 @@ func NewRoomService(r registry.Registry) *RoomService {
 		roomRepo:      r.NewRoomRepository(),
 		roomThemeRepo: r.NewRoomThemeRepository(),
 		themeRepo:     r.NewThemeRepository(),
+		userRepo:      r.NewUserRepository(),
+		userRoomRepo:  r.NewUserRoomRepository(),
 	}
 }
 
 // Create は部屋を作成する
-func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string, themeIDs []int) (model.Room, error) {
+func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string, themeIDs []int, userID int) (model.Room, error) {
+	user, err := r.userRepo.FetchByID(db, userID)
+	if err != nil {
+		return model.Room{}, err
+	}
+
 	themes, err := r.themeRepo.FetchByIDs(db, themeIDs)
 	if err != nil {
 		return model.Room{}, err
@@ -45,11 +54,22 @@ func (r *RoomService) Create(db *gorp.DbMap, max int, channelName string, themeI
 	if err != nil {
 		return model.Room{}, err
 	}
+
+	err = r.userRoomRepo.BulkCreate(db, user, room)
+	if err != nil {
+		return model.Room{}, err
+	}
+
 	return room, nil
 }
 
 // Enter は部屋に入る
-func (r *RoomService) Enter(db *gorp.DbMap, channelName string) (model.Room, error) {
+func (r *RoomService) Enter(db *gorp.DbMap, channelName string, userID int) (model.Room, error) {
+	user, err := r.userRepo.FetchByID(db, userID)
+	if err != nil {
+		return model.Room{}, err
+	}
+
 	themes, err := r.roomRepo.FetchThemesByChannelName(db, channelName)
 	if err != nil {
 		return model.Room{}, err
@@ -60,6 +80,28 @@ func (r *RoomService) Enter(db *gorp.DbMap, channelName string) (model.Room, err
 		return model.Room{}, err
 	}
 	room.Themes = themes
+
+	err = r.userRoomRepo.BulkCreate(db, user, room)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	return room, nil
+}
+
+// Start はゲーム開始
+func (r *RoomService) Start(db *gorp.DbMap, channelName string) (model.Room, error) {
+	users, err := r.userRoomRepo.FetchUsersByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	room, err := r.roomRepo.FetchByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	room.Members = users
 
 	return room, nil
 }

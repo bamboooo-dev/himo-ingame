@@ -27,7 +27,7 @@ func NewCreateRoomInteractor(r registry.Registry) *CreateRoomInteractor {
 }
 
 // Call は部屋を作る関数
-func (c *CreateRoomInteractor) Call(db *gorp.DbMap, max int, themeIDs []int) (model.Room, error) {
+func (c *CreateRoomInteractor) Call(db *gorp.DbMap, max int, themeIDs []int, userID int) (model.Room, error) {
 	// channelName に使うランダム文字列を生成
 	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 	b := make([]rune, 15)
@@ -36,7 +36,7 @@ func (c *CreateRoomInteractor) Call(db *gorp.DbMap, max int, themeIDs []int) (mo
 	}
 	randomString := string(b)
 
-	room, err := c.roomService.Create(db, max, randomString, themeIDs)
+	room, err := c.roomService.Create(db, max, randomString, themeIDs, userID)
 	if err != nil {
 		return model.Room{}, err
 	}

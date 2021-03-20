@@ -23,8 +23,8 @@ func NewEnterRoomInteractor(r registry.Registry) *EnterRoomInteractor {
 }
 
 // Call は部屋に入る関数
-func (e *EnterRoomInteractor) Call(db *gorp.DbMap, channelName string) (model.Room, error) {
-	room, err := e.roomService.Enter(db, channelName)
+func (e *EnterRoomInteractor) Call(db *gorp.DbMap, channelName string, userID int) (model.Room, error) {
+	room, err := e.roomService.Enter(db, channelName, userID)
 	if err != nil {
 		return model.Room{}, err
 	}
