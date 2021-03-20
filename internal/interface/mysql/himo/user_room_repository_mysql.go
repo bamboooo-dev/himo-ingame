@@ -31,3 +31,23 @@ func (u UserRoomRepositoryMysql) BulkCreate(db *gorp.DbMap, user model.User, roo
 
 	return nil
 }
+
+// FetchUsersByChannelName fetch users by channelName
+func (u UserRoomRepositoryMysql) FetchUsersByChannelName(db *gorp.DbMap, channelName string) ([]model.User, error) {
+	var daoUsers []dao.User
+
+	_, err := db.Select(&daoUsers, "SELECT u.id, u.nickname FROM user_rooms AS ur INNER JOIN users AS u ON ur.user_id = u.id INNER JOIN rooms AS r ON ur.room_id = r.id WHERE r.channel_name = ?", channelName)
+	if err != nil {
+		return []model.User{}, err
+	}
+
+	users := []model.User{}
+	for _, daoUser := range daoUsers {
+		user := model.User{
+			ID:       daoUser.ID,
+			Nickname: daoUser.Nickname,
+		}
+		users = append(users, user)
+	}
+	return users, nil
+}

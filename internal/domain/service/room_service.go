@@ -88,3 +88,20 @@ func (r *RoomService) Enter(db *gorp.DbMap, channelName string, userID int) (mod
 
 	return room, nil
 }
+
+// Start はゲーム開始
+func (r *RoomService) Start(db *gorp.DbMap, channelName string) (model.Room, error) {
+	users, err := r.userRoomRepo.FetchUsersByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	room, err := r.roomRepo.FetchByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	room.Members = users
+
+	return room, nil
+}
