@@ -152,7 +152,7 @@ func (r *RoomHandler) Start(c *gin.Context) {
 	pubMessageJson, _ := json.Marshal(pubMessage)
 	fmt.Printf("[+] %s\n", string(pubMessageJson))
 
-	url := "http://nginx-nchan/pub/" + channelName
+	url := "http://nchan/pub/" + channelName
 
 	response, err := http.Post(url, "application/json", bytes.NewBuffer(pubMessageJson))
 	defer response.Body.Close()
