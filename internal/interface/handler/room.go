@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"time"
@@ -59,6 +60,18 @@ func NewRoomHandler(l *zap.SugaredLogger, r registry.Registry, db *gorp.DbMap) *
 func (r *RoomHandler) Create(c *gin.Context) {
 	// request の中身を取得
 	var reqJson CreateRoomRequest
+
+	// log for debug
+	buf := make([]byte, 2048)
+	n, _ := c.Request.Body.Read(buf)
+	b := string(buf[0:n])
+
+	// body が Read で空になったので再度入れ込む処理
+	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(b)))
+
+	fmt.Printf("post /room request header:\n %v\n", c.Request.Header)
+	fmt.Printf("post /room request body:\n %v\n", b)
+
 	if err := c.ShouldBindJSON(&reqJson); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -77,6 +90,15 @@ func (r *RoomHandler) Create(c *gin.Context) {
 		c.JSON(500, "Internal Server Error")
 		return
 	}
+
+	// log for debug
+	fmt.Printf("post /room response:\n %v\n", gin.H{
+		"message":      "Room successfully created",
+		"channel_name": room.ChannelName,
+		"max_num":      room.MaxUserNum,
+		"themes":       room.Themes,
+	})
+
 	c.JSON(200, gin.H{
 		"message":      "Room successfully created",
 		"channel_name": room.ChannelName,
@@ -89,6 +111,18 @@ func (r *RoomHandler) Create(c *gin.Context) {
 func (r *RoomHandler) Enter(c *gin.Context) {
 	// request の中身を取得
 	var reqJson EnterRoomRequest
+
+	// log for debug
+	buf := make([]byte, 2048)
+	n, _ := c.Request.Body.Read(buf)
+	b := string(buf[0:n])
+
+	// body が Read で空になったので再度入れ込む処理
+	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(b)))
+
+	fmt.Printf("post /enter request header:\n %v\n", c.Request.Header)
+	fmt.Printf("post /enter request body:\n %v\n", b)
+
 	if err := c.ShouldBindJSON(&reqJson); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -106,6 +140,14 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 		c.JSON(500, "Internal Server Error")
 		return
 	}
+
+	// log for debug
+	fmt.Printf("post /room response: %v", gin.H{
+		"message": "Successfully entered room",
+		"themes":  room.Themes,
+		"max_num": room.MaxUserNum,
+	})
+
 	c.JSON(200, gin.H{
 		"message": "Successfully entered room",
 		"themes":  room.Themes,
@@ -116,6 +158,18 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 func (r *RoomHandler) Start(c *gin.Context) {
 	// request の中身を取得
 	var reqJson StartRoomRequest
+
+	// log for debug
+	buf := make([]byte, 2048)
+	n, _ := c.Request.Body.Read(buf)
+	b := string(buf[0:n])
+
+	// body が Read で空になったので再度入れ込む処理
+	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(b)))
+
+	fmt.Printf("post /start request header:\n %v\n", c.Request.Header)
+	fmt.Printf("post /start request body:\n %v\n", b)
+
 	if err := c.ShouldBindJSON(&reqJson); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
