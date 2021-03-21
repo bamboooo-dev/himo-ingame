@@ -25,12 +25,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
+    entrypoint: "air"
     env_file: ./.envrc.docker.local
-    command: "./bin/ingame"
+    volumes:
+      - .:/himo-ingame
+      - bin:/himo-ingame/bin
     ports:
-      - 8080:8080
+      - "8080:8080"
     networks:
       - himo_links
+volumes:
+  bin:
 
 # devサーバーで ingame が先に立っていた outgame の db service をみるためにネットワークを指定
 # 上記の理由から db はこの yaml から消している
