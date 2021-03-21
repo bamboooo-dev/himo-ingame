@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"strconv"
 	"time"
@@ -87,6 +89,17 @@ func main() {
 			return false
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
+			// log for debug
+			buf := make([]byte, 2048)
+			n, _ := c.Request.Body.Read(buf)
+			b := string(buf[0:n])
+
+			// body が Read で空になったので再度入れ込む処理
+			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(b)))
+
+			fmt.Printf("post /enter request header:\n %v\n", c.Request.Header)
+			fmt.Printf("post /enter request body:\n %v\n", b)
+
 			c.JSON(code, gin.H{
 				"code":    code,
 				"message": message,
