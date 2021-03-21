@@ -97,8 +97,8 @@ func main() {
 			// body が Read で空になったので再度入れ込む処理
 			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(b)))
 
-			fmt.Printf("post /enter request header:\n %v\n", c.Request.Header)
-			fmt.Printf("post /enter request body:\n %v\n", b)
+			fmt.Printf("auth middleware request header:\n %v\n", c.Request.Header)
+			fmt.Printf("auth middleware request body:\n %v\n", b)
 
 			c.JSON(code, gin.H{
 				"code":    code,
