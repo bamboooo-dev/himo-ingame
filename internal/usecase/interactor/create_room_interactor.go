@@ -1,13 +1,14 @@
 package interactor
 
 import (
-	"math/rand"
+	"fmt"
 
 	"github.com/bamboooo-dev/himo-ingame/internal/domain/model"
 	"github.com/bamboooo-dev/himo-ingame/internal/domain/service"
 	"github.com/bamboooo-dev/himo-ingame/internal/registry"
 	himo_repo "github.com/bamboooo-dev/himo-ingame/internal/usecase/repository/himo"
 	"github.com/go-gorp/gorp"
+	"github.com/google/uuid"
 )
 
 // CreateRoomInteractor は部屋を作るユースケースを司る構造体
@@ -28,15 +29,16 @@ func NewCreateRoomInteractor(r registry.Registry) *CreateRoomInteractor {
 
 // Call は部屋を作る関数
 func (c *CreateRoomInteractor) Call(db *gorp.DbMap, max int, themeIDs []int, userID int) (model.Room, error) {
-	// channelName に使うランダム文字列を生成
-	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	b := make([]rune, 15)
-	for i := range b {
-		b[i] = letter[rand.Intn(len(letter))]
+	// channelName に使うランダム文字列を生成(uuid から部分的に抽出)
+	u, err := uuid.NewRandom()
+	if err != nil {
+		fmt.Println(err)
+		return model.Room{}, err
 	}
-	randomString := string(b)
+	uu := u.String()
+	channelName := uu[1:8] // 抽出の場所は適当
 
-	room, err := c.roomService.Create(db, max, randomString, themeIDs, userID)
+	room, err := c.roomService.Create(db, max, channelName, themeIDs, userID)
 	if err != nil {
 		return model.Room{}, err
 	}
