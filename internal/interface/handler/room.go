@@ -40,7 +40,7 @@ type StartRoomRequest struct {
 }
 type StartRoomMessage struct {
 	FieldType    string   `json:"type"`
-	FieldNumbers []int    `json:"nubmbers"`
+	FieldNumbers []int    `json:"numbers"`
 	FieldNames   []string `json:"names"`
 	FieldMessage string   `json:"message"`
 }
