@@ -217,10 +217,10 @@ func (r *RoomHandler) Start(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"type":     "answer",
-		"nubmbers": numbers,
-		"names":    userNames,
-		"message":  "Successfully entered room",
+		"type":    "answer",
+		"numbers": numbers,
+		"names":   userNames,
+		"message": "Successfully entered room",
 	})
 }
 
