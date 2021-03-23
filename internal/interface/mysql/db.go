@@ -37,7 +37,8 @@ func NewDB(cfg Config) (*gorp.DbMap, error) {
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{Engine: "InnoDB", Encoding: "UTF8"}}
 
 	dbmap.AddTableWithName(dao.Room{}, "rooms").SetKeys(true, "ID")
-	dbmap.AddTableWithName(dao.Theme{}, "themes").SetKeys(true, "ID")
+	// Themes は docker-entry-point-initdb.d で作るからコメントアウト
+	// dbmap.AddTableWithName(dao.Theme{}, "themes").SetKeys(true, "ID")
 	dbmap.AddTableWithName(dao.User{}, "users").SetKeys(true, "ID")
 	dbmap.AddTableWithName(dao.RoomTheme{}, "room_themes")
 	dbmap.AddTableWithName(dao.UserRoom{}, "user_rooms")
