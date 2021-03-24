@@ -142,7 +142,7 @@ func (r *RoomHandler) Enter(c *gin.Context) {
 	}
 
 	// log for debug
-	fmt.Printf("post /room response: %v", gin.H{
+	fmt.Printf("post /enter response: %v", gin.H{
 		"message": "Successfully entered room",
 		"themes":  room.Themes,
 		"max_num": room.MaxUserNum,
