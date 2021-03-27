@@ -22,7 +22,9 @@ services:
       - himo_links
   ingame:
     restart: always
-    image: bamboooo/himo-ingame
+    build:
+      context: .
+      dockerfile: Dockerfile
     env_file: ./.envrc.docker.local
     command: "./bin/ingame"
     ports:
