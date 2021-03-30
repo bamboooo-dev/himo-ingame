@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strconv"
 	"time"
 
@@ -71,7 +72,7 @@ func main() {
 
 	// the jwt middleware
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Key:         []byte("secret"), // TODO: ハードコードやめる
+		Key:         []byte(os.Getenv("JWT_SECRET")),
 		IdentityKey: identityKey,
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
