@@ -193,12 +193,23 @@ func (r *RoomHandler) Start(c *gin.Context) {
 		userNames = append(userNames, user.Nickname)
 	}
 
-	numbers := pickup(1, 100, len(userNames))
+	// room 内のユーザーに重複がある際に握り潰す処理
+	// TODO: 現状は突貫工事なので「やっぱやめる」の際に DB から重複を消すように根本的対策をする
+	m := make(map[string]bool)
+	uniqUserNames := []string{}
+	for _, ele := range userNames {
+		if !m[ele] {
+			m[ele] = true
+			uniqUserNames = append(uniqUserNames, ele)
+		}
+	}
+
+	numbers := pickup(1, 100, len(uniqUserNames))
 
 	pubMessage := StartRoomMessage{
 		FieldType:    "answer",
 		FieldNumbers: numbers,
-		FieldNames:   userNames,
+		FieldNames:   uniqUserNames,
 		FieldMessage: "Successfully entered room",
 	}
 
@@ -219,7 +230,7 @@ func (r *RoomHandler) Start(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"type":    "answer",
 		"numbers": numbers,
-		"names":   userNames,
+		"names":   uniqUserNames,
 		"message": "Successfully entered room",
 	})
 }
