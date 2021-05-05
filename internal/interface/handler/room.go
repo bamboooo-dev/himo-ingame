@@ -37,12 +37,14 @@ type EnterRoomRequest struct {
 
 type StartRoomRequest struct {
 	FieldChannelName string `json:"channel_name"`
+	FieldCycleIndex  int    `json:"cycle_index"`
 }
 type StartRoomMessage struct {
-	FieldType    string   `json:"type"`
-	FieldNumbers []int    `json:"numbers"`
-	FieldNames   []string `json:"names"`
-	FieldMessage string   `json:"message"`
+	FieldType       string   `json:"type"`
+	FieldCycleIndex int      `json:"cycle_index"`
+	FieldNumbers    []int    `json:"numbers"`
+	FieldNames      []string `json:"names"`
+	FieldMessage    string   `json:"message"`
 }
 
 // NewRoomHandler は IndexHandler のポインタを生成する関数です。
@@ -206,11 +208,14 @@ func (r *RoomHandler) Start(c *gin.Context) {
 
 	numbers := pickup(1, 100, len(uniqUserNames))
 
+	cycleIndex := reqJson.FieldCycleIndex
+
 	pubMessage := StartRoomMessage{
-		FieldType:    "answer",
-		FieldNumbers: numbers,
-		FieldNames:   uniqUserNames,
-		FieldMessage: "Successfully entered room",
+		FieldType:       "answer",
+		FieldCycleIndex: cycleIndex,
+		FieldNumbers:    numbers,
+		FieldNames:      uniqUserNames,
+		FieldMessage:    "Successfully entered room",
 	}
 
 	// 構成したメッセージを json で POST して publish
@@ -220,12 +225,12 @@ func (r *RoomHandler) Start(c *gin.Context) {
 	url := "http://nchan/pub?channel_id=" + channelName
 
 	response, err := http.Post(url, "application/json", bytes.NewBuffer(pubMessageJson))
-	defer response.Body.Close()
 	if err != nil {
 		fmt.Println("[!] " + err.Error())
 	} else {
 		fmt.Println("[*] " + response.Status)
 	}
+	defer response.Body.Close()
 
 	c.JSON(200, gin.H{
 		"type":    "answer",
@@ -239,7 +244,7 @@ func (r *RoomHandler) Start(c *gin.Context) {
 func allKeys(m map[int]bool) []int {
 	i := 0
 	result := make([]int, len(m))
-	for key, _ := range m {
+	for key := range m {
 		result[i] = key
 		i++
 	}
