@@ -233,10 +233,11 @@ func (r *RoomHandler) Start(c *gin.Context) {
 	defer response.Body.Close()
 
 	c.JSON(200, gin.H{
-		"type":    "answer",
-		"numbers": numbers,
-		"names":   uniqUserNames,
-		"message": "Successfully entered room",
+		"type":        "answer",
+		"cycle_index": cycleIndex,
+		"numbers":     numbers,
+		"names":       uniqUserNames,
+		"message":     "Successfully entered room",
 	})
 }
 
