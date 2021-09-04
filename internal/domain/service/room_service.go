@@ -108,7 +108,18 @@ func (r *RoomService) Start(db *gorp.DbMap, channelName string) (model.Room, err
 
 // Start はもう一回ゲーム開始
 func (r *RoomService) Update(db *gorp.DbMap, channelName string, themeIDs []int, userID int) (model.Room, error) {
+	user, err := r.userRepo.FetchByID(db, userID)
+	if err != nil {
+		return model.Room{}, err
+	}
+
 	room, err := r.roomRepo.FetchByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	// 元々の room に紐づく user を一旦全て削除
+	err = r.userRoomRepo.BulkDelete(db, room)
 	if err != nil {
 		return model.Room{}, err
 	}
@@ -118,12 +129,20 @@ func (r *RoomService) Update(db *gorp.DbMap, channelName string, themeIDs []int,
 	}
 	room.Themes = oldThemes
 
-	themes, err := r.themeRepo.FetchByIDs(db, themeIDs)
+	newThemes, err := r.themeRepo.FetchByIDs(db, themeIDs)
 	if err != nil {
 		return model.Room{}, err
 	}
 
-	err = r.roomThemeRepo.BulkUpdate(db, room, themes)
+	// 元々の room に紐づくお題を更新
+	err = r.roomThemeRepo.BulkUpdate(db, room, newThemes)
+	if err != nil {
+		return model.Room{}, err
+	}
+	room.Themes = newThemes
+
+	// 対象の room に紐づく user に自分を追加
+	err = r.userRoomRepo.BulkCreate(db, user, room)
 	if err != nil {
 		return model.Room{}, err
 	}

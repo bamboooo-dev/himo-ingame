@@ -8,5 +8,6 @@ import (
 // UserRoomRepository はインターフェース
 type UserRoomRepository interface {
 	BulkCreate(db *gorp.DbMap, user model.User, room model.Room) error
+	BulkDelete(db *gorp.DbMap, room model.Room) error
 	FetchUsersByChannelName(db *gorp.DbMap, channelName string) ([]model.User, error)
 }
