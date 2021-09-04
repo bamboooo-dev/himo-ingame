@@ -23,6 +23,7 @@ type RoomHandler struct {
 	creator *interactor.CreateRoomInteractor
 	enteror *interactor.EnterRoomInteractor
 	starter *interactor.StartRoomInteractor
+	updater *interactor.UpdateRoomInteractor
 	db      *gorp.DbMap
 }
 
