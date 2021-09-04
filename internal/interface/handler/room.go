@@ -47,6 +47,11 @@ type StartRoomMessage struct {
 	FieldMessage    string   `json:"message"`
 }
 
+type UpdateRoomRequest struct {
+	FieldChannelName string `json:"channel_name"`
+	FieldThemeIds    []int  `json:"theme_ids"`
+}
+
 // NewRoomHandler は IndexHandler のポインタを生成する関数です。
 func NewRoomHandler(l *zap.SugaredLogger, r registry.Registry, db *gorp.DbMap) *RoomHandler {
 	return &RoomHandler{
@@ -238,6 +243,54 @@ func (r *RoomHandler) Start(c *gin.Context) {
 		"numbers":     numbers,
 		"names":       uniqUserNames,
 		"message":     "Successfully entered room",
+	})
+}
+
+func (r *RoomHandler) Update(c *gin.Context) {
+	// request の中身を取得
+	var reqJson UpdateRoomRequest
+
+	// log for debug
+	buf := make([]byte, 2048)
+	n, _ := c.Request.Body.Read(buf)
+	b := string(buf[0:n])
+
+	// body が Read で空になったので再度入れ込む処理
+	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(b)))
+
+	fmt.Printf("post /update request header:\n %v\n", c.Request.Header)
+	fmt.Printf("post /update request body:\n %v\n", b)
+
+	if err := c.ShouldBindJSON(&reqJson); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	channelName := reqJson.FieldChannelName
+	themeIDs := reqJson.FieldThemeIds
+
+	room, err := r.updater.Call(r.db, channelName, themeIDs)
+	if err == sql.ErrNoRows {
+		c.JSON(404, "Not Found")
+		return
+	}
+	if err != nil {
+		c.JSON(500, "Internal Server Error")
+		return
+	}
+
+	// log for debug
+	fmt.Printf("post /update response:\n %v\n", gin.H{
+		"message":      "Room successfully updated",
+		"channel_name": room.ChannelName,
+		"max_num":      room.MaxUserNum,
+		"themes":       room.Themes,
+	})
+
+	c.JSON(200, gin.H{
+		"message":      "Room successfully updated",
+		"channel_name": room.ChannelName,
+		"max_num":      room.MaxUserNum,
+		"themes":       room.Themes,
 	})
 }
 
