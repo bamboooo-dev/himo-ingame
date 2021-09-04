@@ -269,8 +269,9 @@ func (r *RoomHandler) Update(c *gin.Context) {
 	}
 	channelName := reqJson.FieldChannelName
 	themeIDs := reqJson.FieldThemeIds
+	userID, _ := c.Get("AuthorizedUser")
 
-	room, err := r.updater.Call(r.db, channelName, themeIDs)
+	room, err := r.updater.Call(r.db, channelName, themeIDs, userID.(int))
 	if err == sql.ErrNoRows {
 		c.JSON(404, "Not Found")
 		return

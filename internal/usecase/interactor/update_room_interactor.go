@@ -25,8 +25,8 @@ func NewUpdateRoomInteractor(r registry.Registry) *UpdateRoomInteractor {
 }
 
 // Call は部屋を更新する関数
-func (c *UpdateRoomInteractor) Call(db *gorp.DbMap, channelName string, themeIDs []int) (model.Room, error) {
-	updatedRoom, err := c.roomService.Update(db, channelName, themeIDs)
+func (c *UpdateRoomInteractor) Call(db *gorp.DbMap, channelName string, themeIDs []int, userID int) (model.Room, error) {
+	updatedRoom, err := c.roomService.Update(db, channelName, themeIDs, userID)
 	if err != nil {
 		return model.Room{}, err
 	}

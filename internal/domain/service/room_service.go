@@ -107,7 +107,7 @@ func (r *RoomService) Start(db *gorp.DbMap, channelName string) (model.Room, err
 }
 
 // Start はもう一回ゲーム開始
-func (r *RoomService) Update(db *gorp.DbMap, channelName string, themeIDs []int) (model.Room, error) {
+func (r *RoomService) Update(db *gorp.DbMap, channelName string, themeIDs []int, userID int) (model.Room, error) {
 	room, err := r.roomRepo.FetchByChannelName(db, channelName)
 	if err != nil {
 		return model.Room{}, err
