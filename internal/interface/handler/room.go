@@ -60,6 +60,7 @@ func NewRoomHandler(l *zap.SugaredLogger, r registry.Registry, db *gorp.DbMap) *
 		creator: interactor.NewCreateRoomInteractor(r),
 		enteror: interactor.NewEnterRoomInteractor(r),
 		starter: interactor.NewStartRoomInteractor(r),
+		updater: interactor.NewUpdateRoomInteractor(r),
 		db:      db,
 	}
 }

@@ -105,3 +105,28 @@ func (r *RoomService) Start(db *gorp.DbMap, channelName string) (model.Room, err
 
 	return room, nil
 }
+
+// Start はもう一回ゲーム開始
+func (r *RoomService) Update(db *gorp.DbMap, channelName string, themeIDs []int) (model.Room, error) {
+	room, err := r.roomRepo.FetchByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+	oldThemes, err := r.roomRepo.FetchThemesByChannelName(db, channelName)
+	if err != nil {
+		return model.Room{}, err
+	}
+	room.Themes = oldThemes
+
+	themes, err := r.themeRepo.FetchByIDs(db, themeIDs)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	err = r.roomThemeRepo.BulkUpdate(db, room, themes)
+	if err != nil {
+		return model.Room{}, err
+	}
+
+	return room, nil
+}

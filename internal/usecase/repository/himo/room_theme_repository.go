@@ -8,4 +8,5 @@ import (
 // RoomThemeRepository はインターフェース
 type RoomThemeRepository interface {
 	BulkCreate(db *gorp.DbMap, room model.Room, themes []model.Theme) error
+	BulkUpdate(db *gorp.DbMap, room model.Room, themes []model.Theme) error
 }
