@@ -1,4 +1,4 @@
-FROM golang:1.16.0-alpine AS go_build
+FROM golang:1.17.0-alpine3.13 AS go_build
 
 RUN apk --update --no-cache add git build-base tzdata openssh
 
