@@ -271,6 +271,25 @@ func (r *RoomHandler) Update(c *gin.Context) {
 	themeIDs := reqJson.FieldThemeIds
 	userID, _ := c.Get("AuthorizedUser")
 
+	// 2回目以降の sub だと nchan から情報がなだれ込むので、事前に channel ごと消しておく
+	client := &http.Client{}
+	url := "http://nchan/pub?channel_id=" + channelName
+
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		fmt.Println("[!] " + err.Error())
+		return
+	}
+	response, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	} else {
+		fmt.Println("[*] " + response.Status)
+	}
+	defer response.Body.Close()
+
+	// ここから update のメイン処理
 	room, err := r.updater.Call(r.db, channelName, themeIDs, userID.(int))
 	if err == sql.ErrNoRows {
 		c.JSON(404, "Not Found")
