@@ -35,3 +35,18 @@ func (r RoomThemeRepositoryMysql) BulkCreate(db *gorp.DbMap, room model.Room, th
 
 	return nil
 }
+
+// Update RoomTheme
+func (r RoomThemeRepositoryMysql) BulkUpdate(db *gorp.DbMap, room model.Room, themes []model.Theme) error {
+	// バルクアップデートしている
+	_, err := db.Exec(
+		"update room_themes set theme_id = elt(field(theme_id, ?, ?, ?), ?, ?, ?) where room_id = ?",
+		room.Themes[0].ID, room.Themes[1].ID, room.Themes[2].ID,
+		themes[0].ID, themes[1].ID, themes[2].ID,
+		room.ID,
+	)
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -142,6 +142,7 @@ func main() {
 		router.POST("/room", func(c *gin.Context) { roomHandler.Create(c) })
 		router.POST("/enter", func(c *gin.Context) { roomHandler.Enter(c) })
 		router.POST("/start", func(c *gin.Context) { roomHandler.Start(c) })
+		router.POST("/update", func(c *gin.Context) { roomHandler.Update(c) })
 	}
 	router.Run(":8080")
 }

@@ -51,3 +51,12 @@ func (u UserRoomRepositoryMysql) FetchUsersByChannelName(db *gorp.DbMap, channel
 	}
 	return users, nil
 }
+
+// Delete UserRooms by roomID
+func (u UserRoomRepositoryMysql) BulkDelete(db *gorp.DbMap, room model.Room) error {
+	_, err := db.Exec("delete from user_rooms where room_id = ?", room.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
